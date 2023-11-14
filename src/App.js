@@ -1,20 +1,17 @@
 import { todoAdapter, useGetTodoQuery } from "./features/todoSlice";
 
 const Item = ({ id }) => {
-  const { selectById } = todoAdapter.getSelectors(
-    /** if i supply the initial state here, selectById will return undefined.
-      () => todoAdapter.getInitialState()
-    */
-  );
+  // "unglobalized" set of selectors
+  const { selectById } = todoAdapter.getSelectors();
 
-  const { listById } = useGetTodoQuery(undefined, {
+  const { itemById } = useGetTodoQuery(undefined, {
     selectFromResult: ({ data }) => ({
-      // throws an error. 
-      listById: data.data && selectById(data.data, id)
+      // Passing same "state" as the one that was set. Throws an error. 
+      itemById: data.data && selectById(data.data, id)
     })
   });
 
-  return <div>list: {listById?.item}</div>
+  return <div>list: {itemById?.item}</div>
 }
 
 function App() {
