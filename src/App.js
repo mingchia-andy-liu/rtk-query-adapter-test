@@ -17,7 +17,7 @@ function App() {
   const { data, isLoading } = useGetTodoQuery(page);
   if (isLoading) { return <div>is loading...</div> }
   
-  const todos = selectAllTodos(data);
+  const todos = selectAllTodos(data); // would like to somehow use the adapter selector to get the entire list
   return (
     <div>
       <button onClick={() => setPage((prePage) => prePage + 1)}>next page</button>
