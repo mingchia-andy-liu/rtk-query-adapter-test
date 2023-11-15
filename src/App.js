@@ -1,29 +1,28 @@
-import { todoAdapter, useGetTodoQuery } from "./features/todoSlice";
+import {useState} from 'react';
+import { selectTodoById, selectAllTodos, useGetTodoQuery } from "./features/todoSlice";
 
 const Item = ({ id }) => {
-  // "unglobalized" set of selectors
-  const { selectById } = todoAdapter.getSelectors();
-
+  // Do not know the pagination parameters. ie sorting/pageSize/page number/query options. Passing undefined will act as a new query and not retrieve 
   const { itemById } = useGetTodoQuery(undefined, {
-    selectFromResult: ({ data }) => ({
-      // Passing same "state" as the one that was set. Throws an error. 
-      itemById: data.data && selectById(data.data, id)
+    selectFromResult: ({data}) => ({
+      itemById: data && selectTodoById(data, id)
     })
   });
-
   return <div>list: {itemById?.item}</div>
 }
 
 function App() {
+  const [page, setPage] = useState(1);
   // data of { count: number, data: T[] }
-  const { data, isLoading } = useGetTodoQuery(/** pagination args */);
-
+  const { data, isLoading } = useGetTodoQuery(page);
   if (isLoading) { return <div>is loading...</div> }
-
+  
+  const todos = selectAllTodos(data);
   return (
     <div>
-      {data?.data && data?.data.map((i) => {
-        return <Item key={i.id} id={i.id} />
+      <button onClick={() => setPage((prePage) => prePage + 1)}>next page</button>
+      {todos.map((t) => {
+        return <Item key={t.id} id={t.id} />
       })}
     </div>
   );
